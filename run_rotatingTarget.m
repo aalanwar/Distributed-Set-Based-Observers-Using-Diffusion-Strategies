@@ -147,7 +147,7 @@ targetLoc_history_plot= {};
 t_history_plot = [];
 diffEnable =1;
 numofneig = length(nm.network{1})-1;
-algorithm = 'luenberger';
+algorithm = 'set-membership';
 %set-membership
 %luenberger
 

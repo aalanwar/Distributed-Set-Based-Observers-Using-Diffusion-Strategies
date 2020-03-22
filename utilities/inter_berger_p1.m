@@ -1,4 +1,4 @@
-function [eita,eita_zonotope]=inter_p1_berger(method,x,hmeas,Rl,yl,x_zonotope,myY,myh,fstate,Q)
+function [eita,eita_zonotope]=inter_berger_p1(method,x,hmeas,Rl,yl,x_zonotope,myY,myh,fstate,Q)
 % diffusion Kalman
 %   Detailed explanation goes here
 

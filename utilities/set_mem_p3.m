@@ -1,23 +1,12 @@
-function [x_next,x_next_zonotope]=set_mem_p3(fstate ,Q,G,x,x_zonotope)
+function [x_next_zonotope]=set_mem_p3(fstate ,Q,x_zonotope)
 
-%[f, F_bar]= jaccsd(fstate,x);
-%u = f - F_bar*x;
-%x_next = F_bar*x + u;
-%x_next_zonotope = zonotope(F_bar*x_zonotope); % to be tested
 
-[f, F_bar]= jaccsd(fstate,x);
-x_next = F_bar*x ;
-x_next_zonotope = zonotope(F_bar*x_zonotope); % to be tested
+[f, F_bar]= jaccsd(fstate,x_zonotope.center);
+new_center = F_bar*x_zonotope.center ;
+new_gen = [F_bar*x_zonotope.generators, Q];
+x_next_zonotope = zonotope([new_center, new_gen]); % to be tested
 
-%correct center
-% temp = x_next_zonotope.Z;
-% temp(:,1)=x_next;
-% x_next_zonotope=zonotope(temp);
 
-%%----------
-P_next = F_bar*P*transpose(F_bar) + G*Q*transpose(G);
-
-%P_next = F_bar*P*conj(F_bar) + G*Q*conj(G);
 end
 
 

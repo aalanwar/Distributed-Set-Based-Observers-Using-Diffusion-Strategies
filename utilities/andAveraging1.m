@@ -5,7 +5,12 @@ function [Z] = andAveraging1(zonol,varargin)
 % 'volume'
 % 'radius'
 %
+% closedform
+% true: use the closed form for normGen
+% false: do not use the closed form for normGen
 %
+%
+%sumofw: free parameter for the closed form of normGen
 % Syntax:
 %    Z = and(zonol,options)
 %
@@ -28,7 +33,15 @@ function [Z] = andAveraging1(zonol,varargin)
 %     plot(zonol{1},[1,2],'r');
 %     plot(zonol{2},[1,2],'r-+');
 %     plot(zonol{3},[1,2],'r-*');
-%    plot(res,[1,2],'k');
+%     plot(res,[1,2],'k');
+%% other supported options for normGen
+%% find the best sum of w's
+% res = andAveraging(zonol,'normGen',false);
+%% sum of w's =0.9 for the closed form
+% res = andAveraging(zonol,'normGen',true,0.9);
+%
+%
+%
 %
 % Other m-files required: none
 % Subfunctions: none
@@ -43,31 +56,44 @@ function [Z] = andAveraging1(zonol,varargin)
 % Last revision: ---
 
 %------------- BEGIN CODE --------------
-%check if they are intersecting
-intersectionFlag=true;
-% for ii=1:length(zonol)
-%     for j=ii+1:length(zonol)
-%         if ~isIntersecting(zonol{ii},zonol{j})
-%             intersectionFlag=false;
-%         end
-%     end
-% end
 
-if intersectionFlag==false
-    disp('There is no visible intersection.');
-    return;
-end
 %2 inputs
-if nargin==1
+if nargin==1 %default
     %The optimization function is based on norm of the generators
     method='normGen';
+    sumofw =1;
+    closeform = true;
     %3 inputs
-elseif nargin==2
+elseif nargin==2 % choose other methods
     method =varargin{1};
+    if strcmp(method,'normGen')
+        sumofw =1;
+        closeform = true;
+    end
+elseif nargin==3 % choose closed form or not for normGen option
+    method =varargin{1};
+    closeform = varargin{2};
+    sumofw =1;
+    if ~strcmp(method,'normGen')
+        disp('combination is not supported')
+        return;
+    end
+elseif nargin==4 % choose closed form and specific sum of w's
+    method =varargin{1};
+    closeform = varargin{2};
+    if strcmp(method,'normGen') && closeform
+        sumofw =varargin{3};
+    else
+        disp('combination is not supported')
+        return;
+    end
+else
+    disp('combination is not supported')
+    return;
 end
 
 
-if strcmp(method,'normGen')
+if strcmp(method,'normGen') && closeform
     tVec = zeros(1,length(zonol));
     w = zeros(1,length(zonol));
     %find Analytical solution
@@ -78,9 +104,9 @@ if strcmp(method,'normGen')
     end
     
     for ii=1:length(zonol)
-        w(ii)= 1/(tVec(ii) * invtVecSum );
+        w(ii)= sumofw/(tVec(ii) * invtVecSum );
     end
-elseif  strcmp(method,'volume') || strcmp(method,'radius')
+elseif strcmp(method,'normGen')|| strcmp(method,'volume') || strcmp(method,'radius')
     w0=(1/length(zonol))*ones(length(zonol),1);
     options = optimoptions(@fminunc,'Algorithm', 'quasi-newton','Display','off');
     %find the weights
@@ -111,10 +137,12 @@ Z = zonotope([cen,gen]);
         gen_inter = (1/sum(w))*gen_inter;
         cen_inter = cen_inter/sum(w);
         
-        if strcmp(method,'volume')
-            nfro = volume(zonotope([cen_inter gen_inter]));
+        if strcmp(method,'normGen')
+             nfro = norm(gen_inter,'fro');           
         elseif strcmp(method,'radius')
             nfro = radius(zonotope([cen_inter gen_inter]));
+        elseif strcmp(method,'volume')
+           nfro = volume(zonotope([cen_inter gen_inter]));
         end
         
     end

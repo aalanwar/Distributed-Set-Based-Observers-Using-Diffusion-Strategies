@@ -57,8 +57,7 @@ classdef Node_R < handle
         
         % eita = [ p o b ad ao]
         % xdiff = [ p o b ad ao pE oE bE adE aoE]
-        
-        
+            
         %% ------ Eita
         % Meas Cov
         Measvar_Eita_P ;
@@ -274,14 +273,9 @@ classdef Node_R < handle
         function p = getTruePosition(obj)
             p = obj.true_p;
         end
+
         
-        function att=getStateAttack(obj)
-            att=obj.state_att;
-        end
-        
-        function att=getStateAttackOffset(obj)
-            att=obj.state_att_offset;
-        end
+
         % set the estimated state position
         function setStatePosition(obj, pos)
             %  if ~iscolumn(pos)
@@ -290,15 +284,7 @@ classdef Node_R < handle
             obj.state_p = pos;
         end
         
-        % set the clock offset
-        function setStateClockOfst(obj, ofst)
-            obj.state_clkofst = ofst;
-        end
-        
-        % set the clock bias
-        function setStateClockBias(obj, bias)
-            obj.state_clkbias = bias;
-        end
+
         
         % get the estimated state position
         function p = getStatePosition(obj)
@@ -332,10 +318,6 @@ classdef Node_R < handle
            % obj.state_att = si(4);
         end
         
-        % get the process variance vector
-        function q = getProcessVar(obj)
-            q = [obj.var_p];
-        end
         
         % get the process variance vector
         function q = getEitaProcessVar(obj)
@@ -361,66 +343,17 @@ classdef Node_R < handle
                 ];
         end
         
-        % get the process variance vector
-        function q = getEitaProcessVarImpState(obj)
-            q = [obj.var_Eita_P ;
-                obj.var_Eita_O ;
-                obj.var_Eita_B ;
-                %obj.var_Eita_Ad ;
-                %obj.var_Eita_Ao ;
-                obj.var_Eita_PE ;
-                obj.var_Eita_OE ;
-                obj.var_Eita_BE
-                %obj.var_Eita_AdE ;
-                %obj.var_Eita_AoE
-                ];
-        end
+
         
-        function q = getEitaMeasVarImpState(obj)
-            q = [
-                obj.Measvar_Eita_P ;
-                obj.Measvar_Eita_O ;
-                obj.Measvar_Eita_B %;
-                %obj.Measvar_Eita_Ad ;
-                %obj.Measvar_Eita_Ao ;
-                ];
-        end
+
         % get the initial variance vector
         function q = getInitialVar(obj)
             q = [obj.vari_p];
         end
         
         % set this as the reference node
-        function setAsReference(obj)
-%             obj.state_clkofst = 0;
-%             obj.state_clkbias = 0 ;
-%             obj.state_att_offset = 0;
-%             
-%             obj.vari_p = [1e-10; 1e-10; 1e-10 ];
-%             obj.var_co = 1e-10 ;
-%             obj.vari_co = 1e-10 ;
-%             obj.var_cb = 1e-10 ;
-%             obj.vari_cb = 1e-10 ;
-%             obj.vari_att_offset= 1e-10;
-%             obj.var_att_offset= 1e-10;
-%             obj.var_att= 1e-10;
-%             obj.vari_att = 1e-10;
-            %             obj.vari_att = 1e-14 ;
-            %             obj.vari_att_offset= 1e-14 ;
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            %             obj.state_clkofst = 0;
-            %             obj.state_clkbias = 0 ;
-            %             obj.vari_p = [0; 0;0 ];
-            %             obj.var_co = 0;
-            %             obj.vari_co = 0 ;
-            %             obj.var_cb = 0 ;
-            %             obj.vari_cb = 0 ;
-            %             %obj.vari_att = 0;
-            %             obj.vari_att_offset= 0;
-            %             obj.var_att_offset= 0;
-            
-            obj.is_reference = true;
-            
+        function setAsReference(obj)   
+            obj.is_reference = true;            
         end
         
         % is this node a reference
@@ -448,40 +381,7 @@ classdef Node_R < handle
         function setAttDisCovar(obj, v)
             obj.var_att = v;
         end
-        % %
-        %xdiff = [ P O B Ad Ao PE OE BE AdE AoE]
-        %%%% -------------- EIta MicroKF Process Cov
-        function setEita_P_Covar(obj, v)
-            obj.var_Eita_P = [v; v; v];
-        end
-        function setEita_O_Covar(obj, v)
-            obj.var_Eita_O = v;
-        end
-        function setEita_B_Covar(obj, v)
-            obj.var_Eita_B = v;
-        end
-        function setEita_Ad_Covar(obj, v)
-            obj.var_Eita_Ad = v;
-        end
-        function setEita_Ao_Covar(obj, v)
-            obj.var_Eita_Ao = v;
-        end
-        function setEita_PE_Covar(obj, v)
-            obj.var_Eita_PE = [v; v; v];
-        end
-        function setEita_OE_Covar(obj, v)
-            obj.var_Eita_OE = [v];
-        end
-        function setEita_BE_Covar(obj, v)
-            obj.var_Eita_BE = [v];
-        end
-        function setEita_AdE_Covar(obj, v)
-            obj.var_Eita_AdE = [v];
-        end
-        function setEita_AoE_Covar(obj, v)
-            obj.var_Eita_AoE = [v];
-        end
-        %% --------------
+
         %%%% -------------- EIta MicroKF Meas Cov
         function setEita_P_MeasCovar(obj, v)
             obj.Measvar_Eita_P = [v; v; v];
@@ -530,47 +430,7 @@ classdef Node_R < handle
             
         end
         
-        function set_meas_dopt(obj,meas)
-            
-            srcIndex=meas.getSourceId() +1;
-            desIndex=meas.getDestId() +1;
-            
-            if srcIndex ==11
-                srcIndex =9;
-            end
-            if desIndex ==11
-                desIndex=9;
-            end
-            %check if the measuremnt is between neighbours
-            % if not just discard it
-            %  if( any(obj.myneigh==desIndex) )
-            %                 if (any(obj.measTable(:,1)== srcIndex) && any(obj.measTable(:,2)== desIndex))
-            %                     obj.resetTable=1;
-            %                 else
-            obj.measTableAll(obj.indexTable,1)=srcIndex;
-            obj.measTableAll(obj.indexTable,2)=desIndex;
-            obj.measTableAll(obj.indexTable,3)=meas.R_ij;
-            obj.measTableAll(obj.indexTable,4)=meas.attackValue;
-            obj.measTableAll(obj.indexTable,5)=meas.d_ij;
-            obj.measTableAll(obj.indexTable,6)=meas.attackOffset;
-            obj.measl{obj.indexTable}=meas;
-            obj.indexTable = obj.indexTable +1;
-            
-            %   end
-            
-        end
-        function checkest_dopt(obj,numberofTabRows,numOfNodes)
-            if(length(obj.measTableAll) > numberofTabRows)
-                
-                [obj.bias_list,obj.off_list,obj.attOff,obj.pl_list,obj.attDis,obj.attGndTruth]=  estimate_sec_Dopt(obj.id+1, obj.network,  obj.measTableAll(end-numberofTabRows:end,:),obj.pl_list,numberofTabRows,obj.attDis,obj.attOff,obj.off_list,obj.bias_list,numOfNodes);%,obj.numberofattacks); %,obj.measl
-                obj.state_p = obj.pl_list{obj.id+1};
-                obj.state_clkofst = obj.off_list{obj.id+1};
-                obj.state_clkbias = obj.bias_list{obj.id+1};
-                obj.state_att = obj.attDis(obj.id+1);
-                obj.state_att_offset=obj.attOff(obj.id+1);
-            end
-        end
-        
+
         
         function checkEkfP1(obj,diffEnable,fstate,algorithm,method,Q)
             obj.P_minus = obj.P;
@@ -624,11 +484,7 @@ classdef Node_R < handle
             
             if(obj.ready_to_ekf_p2 == 1 && obj.ready_to_ekf_p1 == 1)
                 
-                %obj.efk_part2(fstate,Q,diffEnable);%,typeDisAtt,typeTimeAtt,currentTime,t_stop);
-                obj.efk_part2_argmin(fstate,Q,diffEnable);
-                %obj.efkPart2Bundle(fstate,Q,diffEnable);
-                %obj.efkPart2BundleInterval(fstate,Q,diffEnable);
-                %obj.efkPart2BundleInterval2ndApp(fstate,Q,diffEnable);
+                obj.diff_p2(fstate,Q,diffEnable);
                 obj.diffUpdateFlag = 1;
                 obj.reseteital();
                 % obj.ekf_p2_done =1;;
@@ -648,12 +504,7 @@ classdef Node_R < handle
                 obj.readytotakeDis=1;
                 obj.algdone =1;
             end
-
-            %if(~diffEnable)
-            %    ekf_part3(obj,Q,fstate);
-                %obj.reseteital();
-            %end
-            %ekf_part3(obj,Q,fstate);
+            
         end
         
         
@@ -729,7 +580,7 @@ classdef Node_R < handle
             if strcmp(algorithm,'set-membership')
                 [obj.eita,obj.eita_zonotope] = set_mem_p1(method,obj.x,obj.P,obj.hl,obj.Rl,obj.yl,obj.x_zonotope);
             elseif strcmp(algorithm,'luenberger')
-                [obj.eita,obj.eita_zonotope] = inter_p1_berger(method,obj.x,obj.hl,obj.Rl,obj.yl,obj.x_zonotope,obj.myY,obj.myh,fstate,Q);     
+                [obj.eita,obj.eita_zonotope] = inter_berger_p1(method,obj.x,obj.hl,obj.Rl,obj.yl,obj.x_zonotope,obj.myY,obj.myh,fstate,Q);     
             end
             if obj.debugEnable==1
                 logMsg(obj.logFileName,'Node Id = %d',obj.id);
@@ -743,177 +594,30 @@ classdef Node_R < handle
             obj.P_i_i= obj.P;
         end
         
-        function efk_part2_argmin(obj,fstate,Q,diffEnable)
-                %obj.x_zonotope = reduce(obj.x_zonotope,'girard',3);
-                obj.x_zonotope = diffusionArgmin(obj.c,obj.x_zonotope,obj.zonol,obj.eita);
-                %newlist =  obj.zonol;
-                %newlist{length(obj.zonol)+1} = obj.x_zonotope;
-                %obj.x_zonotope  = andAveraging(newlist);
-                %obj.x_zonotope = diffusionArgmin_test(obj.c,obj.x_zonotope,obj.zonol,obj.eita);
-                %obj.x_zonotope = deleteAligned(obj.x_zonotope);
+        function diff_p2(obj,fstate,Q,diffEnable)
+                newlist =  obj.zonol;
+                newlist{length(obj.zonol)+1} = obj.x_zonotope;
+                obj.x_zonotope  = andAveraging(newlist,'normGen',false);
                 obj.x_zonotope = reduce(obj.x_zonotope,'girard',20);%20
                 obj.x = obj.x_zonotope.center;
         end
         
         
-        function efk_part2(obj,fstate,Q,diffEnable)
-            if(diffEnable)
-                obj.x_zonotope = reduce(obj.x_zonotope,'girard',3);
-                for i =1:length(obj.c)-1
-                    obj.zonol{i}=reduce(obj.zonol{i},'girard',3);
-                end
-                includedResults= zeros(1,length(obj.c)-1);
-                %x_zonotope_interval = interval(obj.x_zonotope);
-                obj.x =  obj.eita;
-                
-                for i=1:length(obj.c)-1
-                    obj.x = obj.x + obj.eital{i};
-                    includedResults(i)=1;
-                end
-                
-                obj.x=obj.x/(sum(includedResults)+1);%1 for myself for correct averaging
-                % ekf_part3(obj,Q,fstate);
-                
-                obj.x_zonotope = obj.eita_zonotope;
-                %   obj.P=0;
-                for i =1:length(obj.c)-1
-                    %minkowski sum of zonotopes between neighbours
-                    obj.x_zonotope = obj.x_zonotope + obj.zonol{i};
-                end
-                %divide by n to get the average
-                obj.x_zonotope = ( 1/(sum(includedResults)+1) )*obj.x_zonotope;
-                %obj.x_zonotope = reduce(obj.x_zonotope,'girard',3);
-            else
-                %rm diff
-                obj.x= obj.eita;
-                obj.x_zonotope = obj.eita_zonotope;
-            end
-        end        
-        
-        
-        function efkPart2Bundle(obj,fstate,Q,diffEnable)
-            if(diffEnable)
-                zIntersect=conZonotope(obj.eita_zonotope);
-                for i =1:length(obj.zonol)
-                   zIntersect = and(zIntersect,conZonotope(obj.zonol{i})); 
-                end
-                obj.x_zonotope = zonotope(interval(zIntersect));
-                obj.x = obj.x_zonotope.center;
-                
-                obj.x_zonotope = reduce(obj.x_zonotope,'girard',2);
-%                 %bundle Intersection between zonotopes
-%                 tempList = obj.zonol;
-%                 listLength = length(obj.zonol)+1;
-%                 tempList{listLength} = obj.eita_zonotope;
-%                 zB   = zonotopeBundle(tempList); % instantiate zonotope bundle from Z1, Z2
-%                 zIntersect = zonotope(conZonotope(zB));
-%                 obj.x_zonotope = zIntersect;
-%                 obj.x = zIntersect.center;
-                
-                
-            else
-                %rm diff
-                obj.x= obj.eita;
-                obj.x_zonotope = obj.eita_zonotope;
-            end
-        end
-        
-        function efkPart2BundleInterval(obj,fstate,Q,diffEnable)
-            if(diffEnable)
-                %obj.x_zonotope = reduce(obj.x_zonotope,'girard',3);
-                %bundle Intersection between zonotopes
-                tempList = obj.zonol;
-                listLength = length(obj.zonol)+1;
-                tempList{listLength} = obj.eita_zonotope;
-                zB   = zonotopeBundle(tempList); % instantiate zonotope bundle from Z1, Z2
-                %zIntersect = zonotope(conZonotope(zB));
-                zIntersect = zonotope(interval(zB));
-                obj.x_zonotope = zIntersect;
-                obj.x = zIntersect.center;
-                
-                %obj.x_zonotope = reduce(obj.x_zonotope,'girard',2);
-            else
-                %rm diff
-                obj.x= obj.eita;
-                obj.x_zonotope = obj.eita_zonotope;
-            end
-        end
-        
-        function efkPart2BundleInterval2ndApp(obj,fstate,Q,diffEnable)
-            if(diffEnable)
-                %obj.x_zonotope = reduce(obj.x_zonotope,'girard',3);
-                %bundle Intersection between zonotopes
-                templist{1} = obj.eita_zonotope;
-                zonoBund = zonotopeBundle(templist);
-                for i =1:length(obj.zonol)
-                   templist{1} = obj.zonol{i};
-                   zonoBund = zonoBund &  zonotopeBundle(templist);
-                end
-                %zIntersect = zonotope(conZonotope(zB));
-                zIntersect = zonotope(interval(zonoBund));
-                obj.x_zonotope = zIntersect;
-                obj.x = zIntersect.center;
-                
-                %obj.x_zonotope = reduce(obj.x_zonotope,'girard',2);
-            else
-                %rm diff
-                obj.x= obj.eita;
-                obj.x_zonotope = obj.eita_zonotope;
-            end
-        end
-        
-        function efk_part2_oldzono(obj,fstate,Q,diffEnable)
-            if(diffEnable)
-                %obj.x=obj.eita*obj.c(1); %%start with my eita
-                obj.x=obj.eita*obj.c(1);%+3*rand(length(obj.x),1); %%start with my eita
-                obj.x_zonotope = obj.eita_zonotope;
-                temp = obj.x_zonotope.Z;
-                temp(:,1) = temp(:,1) * obj.c(1);
-                obj.x_zonotope = zonotope(temp);
-                %   obj.P=0;
-                for i =1:length(obj.c)-1
-                    obj.x = obj.x+ obj.eital{i}*obj.c(i) ;% +  3*rand(length(obj.x),1) ;
-                    obj.x_zonotope = obj.x_zonotope + obj.eital{i}*obj.c(i);
-                    %      obj.P = obj.P+ obj.Pl{i}*obj.c(i) ;
-                end
-                obj.x_zonotope = reduce(obj.x_zonotope,'girard',30);
-                
-                % ekf_part3(obj,Q,fstate);
-            else
-                %rm diff
-                %obj.x= obj.eita;
-            end
-        end
-        
+
         
      
         function ekf_part3(obj,Q,fstate)
             obj.timeUpdateFlag = 1;
             obj.readyTochangeCovFlag =1;
             obj.x_i_i = obj.x;
-            [obj.x,obj.x_zonotope]=set_mem_p3(fstate ,Q,obj.G,obj.x,obj.x_zonotope);
+            [obj.x_zonotope]=set_mem_p3(fstate ,Q,obj.x_zonotope);
+            obj.x= obj.x_zonotope.center;
             obj.state_ready =1;
             
             % obj.reseteital();
         end
         
-        
-        function ekf_part3_Only(obj,Q,fstate)
-            obj.timeUpdateFlag = 1;
-            obj.x_i_i = obj.x;
-            obj.P_i_i = obj.P;
-            obj.P_minus = obj.P;
-            
-            
-            [obj.P,obj.x]=dif_ekf_p3(fstate ,obj.P,Q,obj.G,obj.x);
-            obj.state_ready =1;
-            %if obj.id == 1
-            obj.x(4) = 0;
-            obj.x(5) = 0;
-            %end
-            
-            % obj.reseteital();
-        end
+
         
         %%%% network topology
         function setmyneigh(obj,neigh,network)
