@@ -18,7 +18,7 @@ src="output/meas2.png"
 raw=true
 alt="Subject Pronouns"
 style="margin-right: 10px;"
-width=100
+width=500
 /><br />
 The main function to intersect strips and a zonotope is "intersectZonoStrip.m" under the "utilities" folder
 
