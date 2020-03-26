@@ -449,7 +449,7 @@ classdef Node_R < handle
                     obj.algdone =1;
                     obj.reseteital();
                     obj.x_zonotope = reduce(obj.x_zonotope,'girard',40);
-                elseif(~diffEnable && strcmp(algorithm,'luenberger'))
+                elseif(~diffEnable && strcmp(algorithm,'interval-based'))
                     obj.x= obj.eita;
                     obj.x_zonotope = obj.eita_zonotope;
                     %obj.x_zonotope = deleteAligned(obj.x_zonotope);
@@ -579,7 +579,7 @@ classdef Node_R < handle
 
             if strcmp(algorithm,'set-membership')
                 [obj.eita,obj.eita_zonotope] = set_mem_p1(method,obj.x,obj.P,obj.hl,obj.Rl,obj.yl,obj.x_zonotope);
-            elseif strcmp(algorithm,'luenberger')
+            elseif strcmp(algorithm,'interval-based')
                 [obj.eita,obj.eita_zonotope] = inter_berger_p1(method,obj.x,obj.hl,obj.Rl,obj.yl,obj.x_zonotope,obj.myY,obj.myh,fstate,Q);     
             end
             if obj.debugEnable==1
@@ -597,8 +597,8 @@ classdef Node_R < handle
         function diff_p2(obj,fstate,Q,diffEnable)
                 newlist =  obj.zonol;
                 newlist{length(obj.zonol)+1} = obj.x_zonotope;
-                obj.x_zonotope  = andAveraging(newlist,'normGen',false);
-                obj.x_zonotope = reduce(obj.x_zonotope,'girard',20);%20
+                obj.x_zonotope  = andAveraging1(newlist,'normGen',false);
+                obj.x_zonotope = reduce(obj.x_zonotope,'girard',40);%20
                 obj.x = obj.x_zonotope.center;
         end
         

@@ -6,22 +6,16 @@ addpath('utilities');
 % should i plot the results
 plotting = 1;
 %% Load saved data
-%load('cache/temp_nodiff_del.mat')%frobenius
 %load('cache/tempRelated')
 %load('cache/kalmanIns/newDis/Re_2neigh')
 %load('cache/kalmanIns/newDisold/Re_4neigh')
 %nodiff/
 
-load('cache/paper/4neigh/berg-frobenius.mat')
+%load('cache/paper/4neigh/berg-frobenius.mat')
 %load('cache/newDis/nodiff/4neigh/set-frobenius.mat')
-%load('cache/newDis2/nodiff/4neigh/berg-frobenius.mat')
-%load('cache/temp');
 
-%two neighbout from folder "linear-mod8-good_except2 twoneigh"
-%load('cache/linear/nodiff/2neigh/set-frobenius.mat')
+load('cache/temp');
 
-%load('cache/linear/6neigh/berg-frobenius.mat')
-%load('cache/linear/nodiff/6neigh/berg-frobenius.mat')
 
 %load('cache/negone');
 node_ids = nm.getNodeIds();

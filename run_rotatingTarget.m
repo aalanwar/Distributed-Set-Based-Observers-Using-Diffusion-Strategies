@@ -149,7 +149,7 @@ diffEnable =1;
 numofneig = length(nm.network{1})-1;
 algorithm = 'set-membership';
 %set-membership
-%luenberger
+%interval-based
 
 method = 'frobenius';
 %frobenius
@@ -328,6 +328,6 @@ name = strcat('cache/newDis/nodiff/',num2str(numofneig),'neigh/',nameportion,'-'
 end
 %save(name, 'nm', 'k', 'nm', 'k', 'p_history','targetLoc_history' ,'t_history','pSupremumAll_history','pInfimumAll_history','disList','p_history_plot','targetLoc_history_plot' ,'t_history_plot','pSupremumAll_history_plot','pInfimumAll_history_plot');
 
-save('cache/temp_nodiff_del', 'nm', 'k', 'p_history','targetLoc_history' ,'t_history','pSupremumAll_history','pInfimumAll_history','disList','p_history_plot','targetLoc_history_plot' ,'t_history_plot','pSupremumAll_history_plot','pInfimumAll_history_plot');
+save('cache/temp', 'nm', 'k', 'nm', 'k', 'p_history','targetLoc_history' ,'t_history','pSupremumAll_history','pInfimumAll_history','disList','p_history_plot','targetLoc_history_plot' ,'t_history_plot','pSupremumAll_history_plot','pInfimumAll_history_plot');
 
 return;

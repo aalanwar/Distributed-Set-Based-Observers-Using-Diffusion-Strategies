@@ -3,7 +3,7 @@ close all
 rand('state',123)
 randn('state',223)
 
-logname = "newrotatingTarget.csv";
+logname = "rotatingTarget.csv";
 
 numOfNodes = 8;
 %approxNumOfMeas = 1e6;
@@ -20,7 +20,7 @@ for i=2:dataLength
     else
         x(:,i) = x(:,i-1);
     end
-    x_noisy(:,i) = x(:,i) +10* rand(2,1);
+    x_noisy(:,i) = x(:,i) +5* rand(2,1);
     
     % From 1 to numOfNodes
     nodeIndex(i) = mod(nodeIndex(i-1)+1,numOfNodes);
