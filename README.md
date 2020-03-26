@@ -17,7 +17,6 @@ a- Measurement update: It consists of overapproximating the intersection between
 src="output/meas2.png"
 raw=true
 alt="Subject Pronouns"
-style="margin-right: 100px;"
 align="center"
 width=500
 /><br />
