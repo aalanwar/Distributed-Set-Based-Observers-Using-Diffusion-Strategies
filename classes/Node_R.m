@@ -463,21 +463,6 @@ classdef Node_R < handle
         end
 
 
-        function init_x_P(obj,x,P,numOfNodes)
-            obj.x=x;
-            obj.x_i_i=x;
-            obj.eita=x;
-            obj.P=P;
-            obj.P_minus=P;
-            obj.P_i_i=P;
-        end
-        
-        
-        
-        function init_x(obj,x)
-            obj.state_p=x;
-        end
-        
         
         
         function checkEkfP2(obj,fstate,Q,diffEnable,algorithm)
@@ -539,7 +524,6 @@ classdef Node_R < handle
         end
         function checkInterconn(obj,fstate,method,Q)
             if(obj.ready_to_ekf_p1 == 1 && obj.ekf_p1_done ==0)
-                %[obj.x_zonotope] = interconnRWork(fstate,method,Q,obj.hl,obj.Rl,obj.yl,obj.x_zonotope,obj.zonol);
                 [obj.x_zonotope] = kalmanInspired(fstate,method,Q,obj.hl,obj.Rl,obj.yl,obj.x_zonotope,obj.zonol);
                 obj.zonoforDisSave=obj.x_zonotope;
                 obj.readytotakeDis=1;
@@ -578,9 +562,11 @@ classdef Node_R < handle
             %obj.eita_zonotope = zonotope([0 1 0;0 0 1]);
 
             if strcmp(algorithm,'set-membership')
-                [obj.eita,obj.eita_zonotope] = set_mem_p1(method,obj.x,obj.P,obj.hl,obj.Rl,obj.yl,obj.x_zonotope);
+               % [obj.eita,obj.eita_zonotope] = set_mem_p1(method,obj.x,obj.P,obj.hl,obj.Rl,obj.yl,obj.x_zonotope);
+                [obj.eita_zonotope]=intersectZonoStrip(obj.x_zonotope,obj.hl,obj.Rl,obj.yl);
+                obj.eita = obj.eita_zonotope.center;
             elseif strcmp(algorithm,'interval-based')
-                [obj.eita,obj.eita_zonotope] = inter_berger_p1(method,obj.x,obj.hl,obj.Rl,obj.yl,obj.x_zonotope,obj.myY,obj.myh,fstate,Q);     
+                [obj.eita,obj.eita_zonotope] = inter_berger_p1(method,obj.x,obj.hl,obj.Rl,obj.yl,obj.x_zonotope,fstate,Q);     
             end
             if obj.debugEnable==1
                 logMsg(obj.logFileName,'Node Id = %d',obj.id);
@@ -636,10 +622,13 @@ classdef Node_R < handle
             center  =zeros(xlength,1);
             width   =150;%16
             obj.x_zonotope=0.5*zonotope([center,width*eye(xlength,xlength)]); %input for reachability analysis
-           % obj.x_zonotope=0.5*zonotope([center,width*eye(xlength,xlength),2*eye(2,2),4*eye(2,2),5*eye(2,2),6*ones(2,2),7*ones(2,2),4*eye(2,2),5*eye(2,2),6*ones(2,2),7*ones(2,2),4*eye(2,2),5*eye(2,2),6*ones(2,2),7*ones(2,2),4*eye(2,2),5*eye(2,2),6*ones(2,2),7*ones(2,2)]); %input for reachability analysis
-           
+            % obj.x_zonotope=0.5*zonotope([center,width*eye(xlength,xlength),2*eye(2,2),4*eye(2,2),5*eye(2,2),6*ones(2,2),7*ones(2,2),4*eye(2,2),5*eye(2,2),6*ones(2,2),7*ones(2,2),4*eye(2,2),5*eye(2,2),6*ones(2,2),7*ones(2,2),4*eye(2,2),5*eye(2,2),6*ones(2,2),7*ones(2,2)]); %input for reachability analysis
+            
             obj.debugEnable = debugEnable;
             obj.logFileName = logFileName;
+            obj.x=center;
+            obj.x_i_i=center;
+            obj.eita=center;
         end
     end
 end

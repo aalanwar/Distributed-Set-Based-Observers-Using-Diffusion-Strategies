@@ -133,9 +133,7 @@ classdef NetworkManager_R < handle
         %                 1               2               3               4               5               6               7               8
         %network= { [8 1 2 3 4 5 6],[1 2 3 4 5 6 7],[1 2 3 4 5 7 8],[3 4 6 7 8 1 2],[3 5 6 7 8 1 2],[4 5 6 7 8 1 2],[6 7 8 2 3 4 5],[7 8 1 3 4 5 6]};
         
-        %conditional msg
-        %network= { [1 2 3 4 5 6 7 8 9],[1 2 3 4 5 6 7 8 9],[1 2 3 4 5 6 7 8 9],[1 2 3 4 5 6 7 8 9],[1 2 3 4 5 6 7 8 9],[1 2 3 4 5 6 7 8  9],[1 2 3 4 5 6 7 8 9],[1 2 3 4 5 6 7 8 9],[1 2 3 4 5 6 7 8 9]};
-         
+      
     end
     
     methods
@@ -526,9 +524,9 @@ classdef NetworkManager_R < handle
         
 
         % state process function
-        function snew = processFcn(obj, s)
+        function snew = processFcn(obj)
             F= [0.992 -0.1247; 0.1247 0.992];
-            snew = F*s;       
+            snew = F;       
         end
         
         function attacks= getAttack(obj)
@@ -545,9 +543,8 @@ classdef NetworkManager_R < handle
             end
         end
         % state measurement function
-
-        function y = measurementFcn(obj, s, meas)
-            y=meas.getMeasFunc()*s;
+        function y = measurementFcn(obj,  meas)
+            y=meas.getMeasFunc();
         end 
  
         
@@ -698,9 +695,9 @@ classdef NetworkManager_R < handle
             end
         end
 
-        function init_x_P_forall_reach(obj,x,P)
+        function init_x_reach(obj,x)
             for i=1:length(obj.nodes)
-                obj.nodes{i}.init_x_P(x,P,length(obj.network))
+                obj.nodes{i}.init_x(x,length(obj.network))
             end
         end
         

@@ -6,16 +6,14 @@ addpath('utilities');
 dbstop if error
 %% Raw Data Log Folder
 logfolder = 'logs/';
-%logfolder = 'C:\Users\Alanwar\Dropbox\Pauldata\good\static';
-%logfolder = 'C:\Users\Alanwar\Dropbox\Pauldata\good/ped04/';
+
 
 
 %% Node/Network configuration
 configfile = 'config/nodepositions';
-%configfile = 'config/nodepositions_nesl_mobile';
+
 
 %% Create Network Manager
-% NetworkManager(nodeconfig, datafolder, <owr_corrections>, <twr_corrections>)
 nm = NetworkManager_R(configfile, logfolder );
 node_ids = nm.getNodeIds();
 node_names = nm.getNodeNames();
@@ -31,31 +29,24 @@ debugEnable=0;
 logfilename='log.txt';
 for nidx=1:length(node_ids)
     nm.nodes{nidx}.initReach(xlength,debugEnable,logfilename);
-    if nm.nodes{nidx}.isMobile() %this is Q
-        nm.nodes{nidx}.setPositionCovar(0.50); % three values in x,y,z
-    else
-        nm.nodes{nidx}.setPositionCovar(0.002);% this is Q
-    end
 end
 
 
 %% Process Covariances
 % Process and Initial noise and state vals are determined by each node object
 Q = diag([0.5 0.5]);
-P = diag([0.002 0.002]);
+
 
 
 %% Save as movie
 SAVEMOVIE = false;
 if SAVEMOVIE
     vidObj = VideoWriter('output/Set_fro.avi');
-    vidObj.FrameRate=10;
+    vidObj.FrameRate=80;
     open(vidObj);
 end
 
 nm.setneigh_forall();
-intialstate = [0;0];
-nm.init_x_P_forall_reach(intialstate,P);
 %% Position Visualization
 % get current true and estimated positions
 pTruStatic = nm.getTrueStaticPositions();
@@ -77,8 +68,6 @@ end
 
 
 for i=1:nm.getNumNodes()
-    %initialize reachability
-    nm.nodes{i}.initReach(xlength,debugEnable,logfilename);
     nid = node_ids(i);
     
     % add text for each node
@@ -99,13 +88,7 @@ end
  xlim([-90 90]);
  ylim([0 4]);
 zlim([-90 90]);
-%  xlim([-70 70]);
-%  ylim([0 4]);
-% zlim([-70 70]);
-%zlim([-40 70]);
-%ylim([0 4]);
-%xlim([-70 20]);
-%zlim([-8 8]);
+
 xlabel('X Position (m)', 'FontSize',14);
 ylabel('Y Position (m)', 'FontSize',14);
 %zlabel('Z Position (m)', 'FontSize',14);
@@ -145,9 +128,9 @@ pSupremumAll_history_plot={};
 pInfimumAll_history_plot={};
 targetLoc_history_plot= {};
 t_history_plot = [];
-diffEnable =1;
+diffEnable =0;
 numofneig = length(nm.network{1})-1;
-algorithm = 'set-membership';
+algorithm = 'interval-based';
 %set-membership
 %interval-based
 
@@ -169,7 +152,7 @@ while (t_last - t_start) < t_stop
     
     % get next measurement object
     meas = nm.getNextMeasurement();
-    % [meas.R_ij , meas.r_ij, meas.R_ij_orig , meas.r_ij_orig]
+
     
     if isempty(meas)
         k
@@ -205,13 +188,10 @@ while (t_last - t_start) < t_stop
     %s = nm.getState();
     
     % configure process and measurement functions
-    f = @(s) nm.processFcn(s);
-    h = @(s) nm.measurementFcn(s, meas);
+    f = nm.processFcn();
+    h = nm.measurementFcn(meas);
 
-    %if( any(nm.network{srcIdx}==dstIdx) )
-    %[s, P] = ekf(f, s, P, h, z, dt_ref*Q, R);
-    %end
-    
+
    
     nm.publishMeasForNeigh(meas,h);
     nm.checkEkfP1(diffEnable,f,algorithm,method,Q);
@@ -244,6 +224,8 @@ while (t_last - t_start) < t_stop
     end
  
     if timepast==1
+        % calculate Hausdorff Distance between estimated zonotopes from
+        % time to time
         allready=1;
         for ii=1:length(nm.nodes)
             if nm.nodes{ii}.readytotakeDis==0

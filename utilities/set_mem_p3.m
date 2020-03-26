@@ -1,7 +1,6 @@
-function [x_next_zonotope]=set_mem_p3(fstate ,Q,x_zonotope)
+function [x_next_zonotope]=set_mem_p3(F_bar ,Q,x_zonotope)
 
 
-[f, F_bar]= jaccsd(fstate,x_zonotope.center);
 new_center = F_bar*x_zonotope.center ;
 new_gen = [F_bar*x_zonotope.generators, Q];
 x_next_zonotope = zonotope([new_center, new_gen]); % to be tested
