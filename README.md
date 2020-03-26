@@ -6,7 +6,7 @@ Amr Alanwar, Jagat Jyoti Rath, Hazem Said, and Matthias Althoff "Distributed-Set
 <br />
 <br />
 We propose two distributed set-based observers using <br />
-1- Set-membership approach<br />
+1- Set-membership approach <br />
 2- Interval-based approach <br />
  for a linear discrete-time dynamical system with bounded modeling and measurement uncertainties. <br />
 <br />
@@ -17,21 +17,22 @@ a- Measurement update: It consists of overapproximating the intersection between
 src="output/meas2.png"
 raw=true
 alt="Subject Pronouns"
-style="margin-right: 10px;"
+style="margin-right: 100px;"
 width=500
 /><br />
-The main function to intersect strips and a zonotope is "intersectZonoStrip.m" under the "utilities" folder
-
-2- Diffusion update: It consists of overapproximating the intersection between a multiple zonotopes by a zonotope which is represented using the following <br /><br />
+The main function to intersect strips and a zonotope is "intersectZonoStrip.m" under the "utilities" folder.<br />
+<br />
+b- Diffusion update: It consists of overapproximating the intersection between a multiple zonotopes by a zonotope which is represented using the following <br /><br />
 <img
 src="output/diff2.png"
 raw=true
 alt="Subject Pronouns"
-style="margin-right: 10px;"
+style="margin-right: 100px;"
 width=500
 /><br />
 The main function to intersect zonotopes is "andAveraging1.m" under the "utilities" folder
 <br />
+c- Time update
 <br />
 <br />
 To run the distribted set-based observer on the rotatingTarget.csv file, do the following
@@ -46,14 +47,14 @@ at to save the generated movie under the video folder.<br />
 src="output/state_x1.png"
 raw=true
 alt="Subject Pronouns"
-style="margin-right: 10px;"
+style="margin-right: 100px;"
 width=500
 /><br />
 <img
 src="output/state_x2.png"
 raw=true
 alt="Subject Pronouns"
-style="margin-right: 10px;"
+style="margin-right: 100px;"
 width=500
 /><br />
 <br />
