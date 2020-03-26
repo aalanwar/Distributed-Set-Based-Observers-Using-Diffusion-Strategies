@@ -128,17 +128,16 @@ pSupremumAll_history_plot={};
 pInfimumAll_history_plot={};
 targetLoc_history_plot= {};
 t_history_plot = [];
-diffEnable =0;
+diffEnable =1;
 numofneig = length(nm.network{1})-1;
-algorithm = 'interval-based';
+algorithm = 'set-membership';
 %set-membership
 %interval-based
 
-method = 'frobenius';
-%frobenius
+method = 'radius';
+%normGen
 %svd
-%diffKF
-%volume
+%radius
 disList =[];
 timepast =0;
 while (t_last - t_start) < t_stop
@@ -194,10 +193,10 @@ while (t_last - t_start) < t_stop
 
    
     nm.publishMeasForNeigh(meas,h);
-    nm.checkEkfP1(diffEnable,f,algorithm,method,Q);
+    nm.check_p1(diffEnable,f,algorithm,method,Q);
     if(diffEnable)
         nm.publishEitaForNeigh();
-        nm.checkEkfP2(f,Q ,diffEnable,algorithm);
+        nm.check_p2(f,Q,algorithm,method);
     end
     
 
@@ -290,14 +289,13 @@ end
 if SAVEMOVIE
     close(vidObj);
 end
-%sync_history(end,:)
-%[mean(abs(sync_history(end,:))),std(abs(sync_history(end,:)))]
+
 
 % % save data
 %save('cache/temp', 'nm', 'k', 'p_history','targetLoc_history' ,'t_history','pSupremumAll_history','pInfimumAll_history');
 if(strcmp(algorithm,'set-membership'))%set-membership
 nameportion='set';
-elseif (strcmp(algorithm,'luenberger'))
+elseif (strcmp(algorithm,'interval'))
  nameportion='berg';
 end
 %with diffusion

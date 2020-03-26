@@ -106,7 +106,7 @@ if strcmp(method,'normGen') && closeform
     for ii=1:length(zonol)
         w(ii)= sumofw/(tVec(ii) * invtVecSum );
     end
-elseif strcmp(method,'normGen')|| strcmp(method,'volume') || strcmp(method,'radius')
+elseif strcmp(method,'normGen')|| strcmp(method,'volume') || strcmp(method,'radius') || strcmp(method,'svd')
     w0=(1/length(zonol))*ones(length(zonol),1);
     options = optimoptions(@fminunc,'Algorithm', 'quasi-newton','Display','off');
     %find the weights
@@ -138,13 +138,14 @@ Z = zonotope([cen,gen]);
         cen_inter = cen_inter/sum(w);
         
         if strcmp(method,'normGen')
-             nfro = norm(gen_inter,'fro');           
+             nfro = norm(gen_inter,'fro');
+        elseif strcmp(method,'svd')
+            nfro = sum(svd(gen_inter)); 
         elseif strcmp(method,'radius')
             nfro = radius(zonotope([cen_inter gen_inter]));
         elseif strcmp(method,'volume')
            nfro = volume(zonotope([cen_inter gen_inter]));
-        end
-        
+        end        
     end
 
 end

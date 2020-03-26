@@ -432,10 +432,10 @@ classdef Node_R < handle
         
 
         
-        function checkEkfP1(obj,diffEnable,fstate,algorithm,method,Q)
+        function check_p1(obj,diffEnable,fstate,algorithm,method,Q)
             obj.P_minus = obj.P;
             if(obj.ready_to_ekf_p1 == 1 && obj.ekf_p1_done ==0)
-                obj.efk_part1(fstate,algorithm,method,Q);
+                obj.alg_p1(fstate,algorithm,method,Q);
                 obj.ekf_p1_done=1;
                 obj.measUpdateFlag=1;
                 if(~diffEnable && strcmp(algorithm,'set-membership'))
@@ -465,11 +465,11 @@ classdef Node_R < handle
 
         
         
-        function checkEkfP2(obj,fstate,Q,diffEnable,algorithm)
+        function check_p2(obj,fstate,Q,algorithm,method)
             
             if(obj.ready_to_ekf_p2 == 1 && obj.ready_to_ekf_p1 == 1)
                 
-                obj.diff_p2(fstate,Q,diffEnable);
+                obj.diff_p2(method);
                 obj.diffUpdateFlag = 1;
                 obj.reseteital();
                 % obj.ekf_p2_done =1;;
@@ -558,12 +558,12 @@ classdef Node_R < handle
             obj.eitaIsSent =0;
         end
         
-        function efk_part1(obj,fstate,algorithm,method,Q)
+        function alg_p1(obj,fstate,algorithm,method,Q)
             %obj.eita_zonotope = zonotope([0 1 0;0 0 1]);
 
             if strcmp(algorithm,'set-membership')
                % [obj.eita,obj.eita_zonotope] = set_mem_p1(method,obj.x,obj.P,obj.hl,obj.Rl,obj.yl,obj.x_zonotope);
-                [obj.eita_zonotope]=intersectZonoStrip(obj.x_zonotope,obj.hl,obj.Rl,obj.yl);
+                [obj.eita_zonotope]=intersectZonoStrip1(obj.x_zonotope,obj.hl,obj.Rl,obj.yl,method);
                 obj.eita = obj.eita_zonotope.center;
             elseif strcmp(algorithm,'interval-based')
                 [obj.eita,obj.eita_zonotope] = inter_berger_p1(method,obj.x,obj.hl,obj.Rl,obj.yl,obj.x_zonotope,fstate,Q);     
@@ -580,12 +580,16 @@ classdef Node_R < handle
             obj.P_i_i= obj.P;
         end
         
-        function diff_p2(obj,fstate,Q,diffEnable)
-                newlist =  obj.zonol;
-                newlist{length(obj.zonol)+1} = obj.x_zonotope;
+        function diff_p2(obj,method)
+            newlist =  obj.zonol;
+            newlist{length(obj.zonol)+1} = obj.x_zonotope;
+            if strcmp(method,'normGen')
                 obj.x_zonotope  = andAveraging1(newlist,'normGen',false);
-                obj.x_zonotope = reduce(obj.x_zonotope,'girard',40);%20
-                obj.x = obj.x_zonotope.center;
+            else
+                obj.x_zonotope  = andAveraging1(newlist,method);
+            end
+            obj.x_zonotope = reduce(obj.x_zonotope,'girard',40);%20
+            obj.x = obj.x_zonotope.center;
         end
         
         

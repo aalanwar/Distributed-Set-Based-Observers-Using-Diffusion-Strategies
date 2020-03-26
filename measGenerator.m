@@ -3,7 +3,7 @@ close all
 rand('state',123)
 randn('state',223)
 
-logname = "rotatingTarget.csv";
+logname = "new_rotatingTarget.csv";
 
 numOfNodes = 8;
 %approxNumOfMeas = 1e6;

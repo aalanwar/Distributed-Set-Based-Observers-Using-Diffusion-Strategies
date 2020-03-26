@@ -712,9 +712,9 @@ classdef NetworkManager_R < handle
                 mineign(i)=obj.nodes{i}.checkest_condMsg();
             end
         end
-       function checkEkfP1(obj,diffEnable,fstate,algorithm,method,Q)
+       function check_p1(obj,diffEnable,fstate,algorithm,method,Q)
             for i=1:length(obj.nodes)
-                obj.nodes{i}.checkEkfP1(diffEnable,fstate,algorithm,method,Q);
+                obj.nodes{i}.check_p1(diffEnable,fstate,algorithm,method,Q);
             end
         end
        function checkInterconn(obj,fstate,method,Q)
@@ -744,9 +744,9 @@ classdef NetworkManager_R < handle
         end        
 
         
-        function checkEkfP2(obj,fstate,Q,diffEnable,algorithm)
+        function check_p2(obj,fstate,Q,algorithm,method)
             for i=1:length(obj.nodes)
-                obj.nodes{i}.checkEkfP2(fstate,Q,diffEnable,algorithm);
+                obj.nodes{i}.check_p2(fstate,Q,algorithm,method);
             end
         end
         

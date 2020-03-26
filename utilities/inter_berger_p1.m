@@ -1,6 +1,5 @@
-function [eita,eita_zonotope]=inter_berger_p1(method,x,hmeas,Rl,yl,x_zonotope,F_bar,Q)
-% diffusion Kalman
-%   Detailed explanation goes here
+function [eita,eita_zonotope]=inter_berger_p1(method,x,hmeas,Rl,yl,x_zonotope,F,Q)
+% TODO: Add the closed form from the paper.
 
 
 H = generators(x_zonotope);
@@ -14,14 +13,13 @@ ub = [];
 nonlcon = @circlecon;
 
 
-
 %options = optimset(@fminsearch,'Display','off','MaxFunEvals',0.1);
 %options = optimoptions(@fmincon,'Algorithm', 'sqp', 'TolX', 1e-9, 'TolFun', 1e-9,'Display','off');
 %lambda = fmincon(@fun_berger,x0,A,b,Aeq,beq,lb,ub,nonlcon, options);
 options = optimset('MaxFunEvals',10000,'MaxIter',1e4);
 lambda = fminsearch(@fun_berger,x0,options);
 %calculate the center
-sum1=F_bar;
+sum1=F;
 sum2=0;
 for i=1:length( Rl)
     sum1 = sum1 - lambda(:,i)* hmeas{i};
@@ -30,7 +28,7 @@ end
 
 eita = sum1 * x +sum2;
 
-H_new = F_bar; % should be F
+H_new = F; 
 for i=1:length( Rl)
     H_new = H_new - lambda(:,i) *hmeas{i};
     R_gen(:,i) = -Rl{1}*lambda(:,i);
@@ -44,7 +42,7 @@ eita_zonotope = x_zonotope;
 
 
     function nfro = fun_berger(lamb)
-        H_p1 = F_bar;
+        H_p1 = F;
         for i=1:length( Rl)
             H_p1 = H_p1 - lamb(:,i)*hmeas{i};
             R_gene(:,i) = -Rl{1}*lamb(:,i);
@@ -52,12 +50,14 @@ eita_zonotope = x_zonotope;
         H_p1 = H_p1 * H;
         H_total = [H_p1 R_gene Q];%Q=0.002*eye(length(x))
         
-        if strcmp(method,'frobenius')
+        if strcmp(method,'normGen')
             nfro = norm(H_total,'fro');
         elseif strcmp(method,'svd')
             nfro = sum(svd(H_total));
+        elseif strcmp(method,'radius')
+            nfro = radius(zonotope([zeros(length(x_zonotope.center),1) H_total]));
         else
-            disp(strcat(method,' is Not supported!'));
+            disp(strcat(method,'is Not supported!'));
         end
         
     end
