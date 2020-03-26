@@ -43,11 +43,11 @@ c- Time update
 <br />
 <br />
 To run the distribted set-based observer on the rotatingTarget.csv file, do the following
-1- Download [CORA](https://github.com/TUMcps/CORA) and [MPT](https://www.mpt3.org/) toolboxs.
-2- Add CORA nad MPT folder and subfolders to the Matlab path.  
-3- cd to the repo folder.
+1- Download [CORA](https://github.com/TUMcps/CORA) and [MPT](https://www.mpt3.org/) toolboxs.<br />
+2- Add CORA nad MPT folder and subfolders to the Matlab path.  <br />
+3- cd to the repo folder.<br />
 4- Open the main file "run_rotatingTarget" <br /> 
-5- choose which algorithm to be executed at line ~150 algorithm = 'set-membership' or algorithm = 'interval-based'
+5- choose which algorithm to be executed at line ~150 algorithm = 'set-membership' or algorithm = 'interval-based'<br />
 6- To save the movie, set<br />
 SAVEMOVIE = true; 
 at to save the generated movie under the video folder.<br />
