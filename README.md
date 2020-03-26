@@ -17,7 +17,7 @@ a- Measurement update: It consists of overapproximating the intersection between
 src="output/meas2.png"
 raw=true
 alt="Subject Pronouns"
-style="margin-right: 10px;"
+style="margin-right: 5px;"
 /><br />
 The main function to intersect strips and a zonotope is "intersectZonoStrip.m" under the "utilities" folder
 
