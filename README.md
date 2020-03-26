@@ -13,6 +13,7 @@ We propose two distributed set-based observers using <br />
 <br />
 The Set-membership approach consists of three steps <br />
 a- Measurement update: It consists of overapproximating the intersection between a strips and zonotope which is represented using the following <br /> <br />
+<p align="center">
 <img
 src="output/meas2.png"
 raw=true
@@ -20,6 +21,7 @@ alt="Subject Pronouns"
 align="center"
 width=500
 /><br />
+ </p>
 The main function to intersect strips and a zonotope is "intersectZonoStrip.m" under the "utilities" folder.<br />
 <br />
 b- Diffusion update: It consists of overapproximating the intersection between a multiple zonotopes by a zonotope which is represented using the following <br /><br />
