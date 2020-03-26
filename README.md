@@ -4,6 +4,9 @@ This repo is the code and data used to evaulate our [paper](https://arxiv.org/ab
 Amr Alanwar, Jagat Jyoti Rath, Hazem Said, and Matthias Althoff "Distributed-Set-Based-Observers-Using-Diffusion-Strategy"<br />
 <br />
 <br />
+This repo to generate the following set-based estimation video. 
+[![video](https://youtu.be/ioKRCaVxyOQ/0.jpg)](https://youtu.be/ioKRCaVxyOQ)
+
 <br />
 We propose two distributed set-based observers using <br />
 1- Set-membership approach <br />
