@@ -43,15 +43,22 @@ c- Time update
 <br />
 <br />
 To run the distribted set-based observer on the rotatingTarget.csv file, do the following
-1- Download [CORA](https://github.com/TUMcps/CORA) and [MPT](https://www.mpt3.org) toolboxs.<br />
+1- Download [CORA](https://github.com/TUMcps/CORA) and [MPT](https://www.mpt3.org) toolboxs.<br />.
+<br />
 2- Add CORA nad MPT folder and subfolders to the Matlab path.  <br />
+<br />
 3- cd to the repo folder.<br />
+<br />
 4- Open the main file "run_rotatingTarget" <br /> 
+<br />
 5- choose which algorithm to be executed at line ~150 algorithm = 'set-membership' or algorithm = 'interval-based'<br />
+<br />
 6- To save the movie, set<br />
 SAVEMOVIE = true; 
 at to save the generated movie under the video folder.<br />
+<br />
 7- This generates mat file (temp by default) under the cache folder. <br />
+<br />
 8- run "plot_rotatingTarget_state.m" which choosing loading the cache temp at the beggining load('cache/temp'). This plots a figure close to the following figures <br /> <br />
 <p align="center">
 <img
@@ -69,8 +76,9 @@ alt="Subject Pronouns"
 width=500
 />
 </p><br />
-9- To change network connectivity edit the network list ~line 120 in NetworkManager_R.m
-%2 neig
+<br />
+9- To change network connectivity edit the network list ~line 120 in NetworkManager_R.m<br />
+%2 neig<br />
  network= { [8 1 2],[1 2 3],[2 3 4],[3 4 5],[4 5 6],[5 6 7],[6 7 8],[7 8 1]}; 
 <br />
 10- To enable/disable the diffusion step set the following to 1/0. <br />
