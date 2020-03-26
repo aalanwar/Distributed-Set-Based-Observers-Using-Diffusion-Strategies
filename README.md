@@ -5,7 +5,7 @@ Amr Alanwar, Jagat Jyoti Rath, Hazem Said, and Matthias Althoff "Distributed-Set
 <br />
 <br />
 This repo to generate the following set-based estimation video. 
-[![video](https://youtu.be/ioKRCaVxyOQ/0.jpg)](https://youtu.be/ioKRCaVxyOQ)
+[![video](https://img.youtube.com/vi/ioKRCaVxyOQ/0.jpg)](https://youtu.be/ioKRCaVxyOQ)
 
 <br />
 We propose two distributed set-based observers using <br />
