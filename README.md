@@ -18,20 +18,20 @@ a- Measurement update: It consists of overapproximating the intersection between
 src="output/meas2.png"
 raw=true
 alt="Subject Pronouns"
-align="center"
 width=500
-/><br />
- </p>
+/>
+</p>
 The main function to intersect strips and a zonotope is "intersectZonoStrip.m" under the "utilities" folder.<br />
 <br />
 b- Diffusion update: It consists of overapproximating the intersection between a multiple zonotopes by a zonotope which is represented using the following <br /><br />
+<p align="center">
 <img
 src="output/diff2.png"
 raw=true
 alt="Subject Pronouns"
-style="margin-right: 100px;"
 width=500
-/><br />
+/>
+</p><br />
 The main function to intersect zonotopes is "andAveraging1.m" under the "utilities" folder
 <br />
 c- Time update
@@ -45,20 +45,22 @@ SAVEMOVIE = true;
 at to save the generated movie under the video folder.<br />
 4- This generates mat file (temp by default) under the cache folder. <br />
 5- run "plot_rotatingTarget_state.m" which choosing loading the cache temp at the beggining load('cache/temp'). This plots a figure close to the following figures <br /> <br />
+<p align="center">
 <img
 src="output/state_x1.png"
 raw=true
 alt="Subject Pronouns"
-style="margin-right: 100px;"
 width=500
-/><br />
+/>
+</p><br />
+<p align="center">
 <img
 src="output/state_x2.png"
 raw=true
 alt="Subject Pronouns"
-style="margin-right: 100px;"
 width=500
-/><br />
+/>
+</p><br />
 <br />
 <br />
 <br />
