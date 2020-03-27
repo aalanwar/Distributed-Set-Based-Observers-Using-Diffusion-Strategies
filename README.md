@@ -4,7 +4,7 @@ This repo is the code and data used to evaulate our [paper](https://arxiv.org/ab
 Amr Alanwar, Jagat Jyoti Rath, Hazem Said, and Matthias Althoff "Distributed-Set-Based-Observers-Using-Diffusion-Strategy"<br />
 <br />
 <br />
-This repo to generate the following set-based estimation video. 
+It ultimately generates the following set-based estimation video. 
 [![video](https://img.youtube.com/vi/ioKRCaVxyOQ/0.jpg)](https://youtu.be/ioKRCaVxyOQ)
 
 <br />
