@@ -1,54 +1,5 @@
 function [res_zonotope]=luenberger(z1,hl,Rl,yl,F,varargin)
-% intersectZonoStrip - computes the intersection between one zonotope and list of strips 
-% options: methods to calculate the weights
-% 'normGen' default and has analytical solution
-% 'svd'
-% 'radius'
-%
-%% the strip is defined as | hx-y | <= d
-%% example with three strips and one zonotope:
-% hl{1} = [1 0];
-% Rl{1} = 5;
-% yl{1} = -2;
-% 
-% hl{2} = [0 1];
-% Rl{2} = 3;
-% yl{2} = 2;
-% 
-% hl{3} = [1 1];
-% Rl{3} = 3;
-% yl{3} = 2;
-% 
-% 
-% z = zonotope([1 2 2 2 6 2 8;1 2 2 0 5 0 6 ]);
-% res_zono= intersectZonoStrip(z,hl,Rl,yl);
-% 
-%%just for comparison
-% poly = mptPolytope([1 0;-1 0; 0 1;0 -1; 1 1;-1 -1],[3;7;5;1;5;1]);
-% zpoly = z& poly;
-% 
-% figure; hold on 
-% plot(z,[1 2],'r-+');
-% plot(poly,[1 2],'r-*');
-% plot(zpoly,[1 2],'b-+');
-% plot(res_zono,[1 2],'b-*');
-% 
-% legend('zonotope','strips','zono&poly','zonoStrips');
-%
-%
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
-%
-% See also: none
-%
-% Author: Amr Alanwar
-% Written: 9-Mar-2020
-% Last update: ---
-%              
-% Last revision: ---
 
-%------------- BEGIN CODE --------------
 
 if nargin==5
     %The optimization function is based on norm of the generators
