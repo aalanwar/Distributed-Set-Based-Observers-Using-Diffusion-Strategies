@@ -377,10 +377,19 @@ classdef NetworkManager_R < handle
        function [est] = getEstPositions(obj)            
             for i=1:obj.numnodes
                 % put
-                est(i,[1 3])=obj.nodes{i}.x_zonotope.center;
+                est(i,[1 3])=center(obj.nodes{i}.x_zonotope);
                 est(i,2) =0;
             end
        end
+       
+      function [est] = getEstPositionsDKF(obj)            
+            for i=1:obj.numnodes
+                % put
+                est(i,[1 3])=obj.nodes{i}.x;
+                est(i,2) =0;
+            end
+       end
+       
        
        function [sup] = getSupremumPositions(obj)
            for i=1:obj.numnodes
@@ -723,15 +732,22 @@ classdef NetworkManager_R < handle
             end
         end
 
-        function RunMeasFlag= checkekf_p1_forallUnconn(obj)
+        function checkekf_p1_forall(obj)
             for i=1:length(obj.nodes)
                 obj.nodes{i}.checkekf_p1();
             end
-            mobileIndex =9;
-            RunMeasFlag = obj.nodes{mobileIndex}.measUpdateFlag;
-            obj.nodes{mobileIndex}.measUpdateFlag = 0;
         end
         
+        function publisheita(obj)
+            for i=1:length(obj.nodes)
+                if(obj.nodes{i}.ready_to_ekf_p1 == 1 && obj.nodes{i}.eitaIsSent ==0) %eita is ready to publish
+                    obj.nodes{i}.eitaIsSent =1;
+                    for j = sort(obj.network{i}) 
+                        obj.nodes{j}.seteital(i,obj.nodes{i}.eita,obj.nodes{i}.P);
+                    end
+                end
+            end
+        end
         
         function RunMeasFlag= checkekf_p1_forall_fake(obj,dt_ref,meas)
             for i=1:length(obj.nodes)
@@ -751,14 +767,10 @@ classdef NetworkManager_R < handle
         end
         
         
-        function [RunDiffFlag,RunTimeFlag]= checkekf_p2_forallUnconn(obj,fstate,Q,diffEnable,dt_ref)
+        function checkekf_p2_forall(obj,fstate,Q,diffEnable,dt_ref)
             for i=1:length(obj.nodes)
-
                 obj.nodes{i}.checkekf_p2(fstate,Q,diffEnable);
             end
-            mobileIndex =9;
-             RunDiffFlag =obj.nodes{mobileIndex}.diffUpdateFlag ;
-            RunTimeFlag = obj.nodes{mobileIndex}.timeUpdateFlag;
         end
 
         function Q=getQ_red(obj,i)
@@ -881,64 +893,19 @@ classdef NetworkManager_R < handle
             end
         end
 
-        % get process variance
-        function Q = getProcessVar_red(obj)
-            Q = [];
-            for i=1:length(obj.nodes)
-                Q = [Q; obj.nodes{i}.getProcessVar()];
-            end
-            Q= diag(Q);
-        end
+
         
-        % get initial variance
-        function P = getInitialVar_red(obj)
-            p = [];
-            for i=1:length(obj.nodes)
-                p = [p; obj.nodes{i}.getInitialVar()];
-            end
-            P = diag(p);
-        end
+
         
-        function setAttackedNodes(obj,nodesArr,valuesArr)
-            obj.attack_nodes=nodesArr;
-            obj.attack_values=valuesArr;
-            %obj.attack_offsets=valuesOffsetArr;
-        end
-        
-        function  checkest_forall_dopt(obj)
-            for i=1:length(obj.nodes)
-                 obj.nodes{i}.checkest_dopt(obj.numberofTabRows,length(obj.network));
-            end
-        end        
-        
-        function publishmeas_forneigh_dopt(obj,meas)
-            srcIndex=meas.getSourceId() +1;
-            desIndex=meas.getDestId() +1;
+
+        function publishmeas_forneigh(obj,meas,h)
+            srcIndex=meas.getNodeIdx;
             
-            if srcIndex ==11
-                srcIndex =9;
+            for i =obj.network{srcIndex}
+                obj.nodes{i}.set_meas(meas,h);
             end
-            if desIndex ==11
-                desIndex=9;
-            end
-            
-            ,pi,oi,bi,pj,oj,bj
-            %check if the measuremnt is between neighbours
-            % if not just discard it
-            if( any(obj.network{srcIndex}==desIndex) )
-                %                 obj.nodes{srcIndex}.set_meas_dopt(meas);
-                %                 obj.nodes{desIndex}.set_meas_dopt(meas);
-                %for i =obj.network{srcIndex}
-                %for i =1:length(obj.network)
-                for i =unique([obj.network{srcIndex},obj.network{desIndex}])
-                    %the distance is between me and my neighbour
-                  %  if( i==srcIndex || i==desIndex )
-                        obj.nodes{i}.set_meas_dopt(meas);
-                  %  end
-                end
-            end
-            
         end
+
         
 
 

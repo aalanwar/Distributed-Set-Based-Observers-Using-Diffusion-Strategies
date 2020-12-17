@@ -62,7 +62,7 @@ end
 
 nm.setneigh_forall();
 intialstate = [0;0];
-nm.init_x_P_forall_reach(intialstate,P);
+%nm.init_x_P_forall_reach(intialstate,P);
 %% Position Visualization
 % get current true and estimated positions
 pTruStatic = nm.getTrueStaticPositions();

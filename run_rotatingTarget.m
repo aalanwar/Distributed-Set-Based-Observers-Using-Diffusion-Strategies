@@ -51,7 +51,7 @@ nm.setneigh_forall();
 % get current true and estimated positions
 pTruStatic = nm.getTrueStaticPositions();
 pEstAll = nm.getEstPositions();
-fig = cfigure(23,23); grid on; hold on; axis equal;
+fig1 = cfigure(23,23); grid on; hold on; axis equal;
 
 htruStatic = plot3(pTruStatic(:,2),pTruStatic(:,3),pTruStatic(:,4),'^k','MarkerSize',10, 'MarkerFaceColor', 'k');
 hestAll = plot3(pEstAll(:,1),pEstAll(:,2),pEstAll(:,3),'r+');
@@ -100,7 +100,7 @@ drawnow;
 
 %% Replay data and run EKF
 % analysis stop time
-t_stop = 1000;
+t_stop = 370;
 nm.attack_nodes = zeros(1,nm.getNumNodes());
 % last global time update
 meas1 = nm.getNextMeasurement();
@@ -130,11 +130,11 @@ targetLoc_history_plot= {};
 t_history_plot = [];
 diffEnable =1;
 numofneig = length(nm.network{1})-1;
-algorithm = 'set-membership';
+algorithm = 'interval-based';
 %set-membership
 %interval-based
 
-method = 'radius';
+method = 'normGen';
 %normGen
 %svd
 %radius
@@ -280,7 +280,7 @@ while (t_last - t_start) < t_stop
         t_history_plot = [t_history_plot; walltime];
 
     if SAVEMOVIE
-        f = getframe(fig);
+        f = getframe(fig1);
         writeVideo(vidObj,f);
     end
 
@@ -295,7 +295,7 @@ end
 %save('cache/temp', 'nm', 'k', 'p_history','targetLoc_history' ,'t_history','pSupremumAll_history','pInfimumAll_history');
 if(strcmp(algorithm,'set-membership'))%set-membership
 nameportion='set';
-elseif (strcmp(algorithm,'interval'))
+elseif (strcmp(algorithm,'interval-based'))
  nameportion='berg';
 end
 %with diffusion

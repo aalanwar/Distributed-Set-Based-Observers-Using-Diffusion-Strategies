@@ -407,28 +407,8 @@ classdef Node_R < handle
             obj.Rx = zeros(1,obj.size_R);
         end
         
-        function set_meas(obj,meas,h)
-            
-            srcIdx = meas.getNodeIdx() ;
-            if(srcIdx == obj.id +1 )
-                obj.myY = meas.vectorize();
-                obj.myh = h;
-            end
-            obj.yl{obj.fill_index} = meas.vectorize();
-            obj.Rl{obj.fill_index} = meas.getCovariance();
-            obj.hl{obj.fill_index} = h;
-            obj.Rx(obj.fill_index) = 1; %available y's and Rl
-            obj.fill_index = obj.fill_index +1;
-            for i =1:length(obj.Rx)
-                if( obj.Rx(i) ==0 )
-                    break; %not ready yet
-                end
-                if(i == length(obj.Rx))
-                    obj.ready_to_ekf_p1 =1;      
-                end
-            end
-            
-        end
+
+    
         
 
         
@@ -441,19 +421,19 @@ classdef Node_R < handle
                 if(~diffEnable && strcmp(algorithm,'set-membership'))
                     obj.x= obj.eita;
                     obj.x_zonotope = obj.eita_zonotope;
-                    ekf_part3(obj,Q,fstate);
+                    timeUpdate(obj,Q,fstate);
                     %obj.x_zonotope = deleteAligned(obj.x_zonotope);
                     
                     obj.zonoforDisSave=obj.x_zonotope;
                     obj.readytotakeDis=1;
                     obj.algdone =1;
                     obj.reseteital();
-                    obj.x_zonotope = reduce(obj.x_zonotope,'girard',40);
+                    obj.x_zonotope = reduce(obj.x_zonotope,'girard',100);
                 elseif(~diffEnable && strcmp(algorithm,'interval-based'))
                     obj.x= obj.eita;
                     obj.x_zonotope = obj.eita_zonotope;
                     %obj.x_zonotope = deleteAligned(obj.x_zonotope);
-                    obj.x_zonotope = reduce(obj.x_zonotope,'girard',40);
+                    obj.x_zonotope = reduce(obj.x_zonotope,'girard',100);
                     obj.zonoforDisSave=obj.x_zonotope;
                     obj.readytotakeDis=1;
                     obj.algdone =1;
@@ -482,7 +462,7 @@ classdef Node_R < handle
                     logMsg(obj.logFileName,'norm2center = %f',nfro);
                 end
                 if strcmp(algorithm,'set-membership')
-                    ekf_part3(obj,Q,fstate);
+                    timeUpdate(obj,Q,fstate);
                 end
                 
                 obj.zonoforDisSave=obj.x_zonotope;
@@ -492,9 +472,11 @@ classdef Node_R < handle
             
         end
         
+
         
+
         
-        
+
         function setEital(obj,index,eita,eita_zonotope)
             %new eita and it is not my eita as well
             if (~any(obj.nodeIndex == index) && index ~= obj.id+1 )
@@ -536,9 +518,98 @@ classdef Node_R < handle
             end
         end
         
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     
+        %%%%%%%%%%%%%%%%     DEKF         %%%%%%%%%%%%%
+            
+        function set_meas(obj,meas,h)
+            
+            srcIdx = meas.getNodeIdx() ;
+            if(srcIdx == obj.id +1 )
+                obj.myY = meas.vectorize();
+                obj.myh = h;
+            end
+            obj.yl{obj.fill_index} = meas.vectorize();
+            obj.Rl{obj.fill_index} = meas.getCovariance();
+            obj.hl{obj.fill_index} = h;
+            obj.Rx(obj.fill_index) = 1; %available y's and Rl
+            obj.fill_index = obj.fill_index +1;
+            for i =1:length(obj.Rx)
+                if( obj.Rx(i) ==0 )
+                    break; %not ready yet
+                end
+                if(i == length(obj.Rx))
+                    obj.ready_to_ekf_p1 =1;      
+                end
+            end
+            
+        end
+        
+       function checkekf_p1(obj)
+            obj.P_minus = obj.P;
+            if(obj.ready_to_ekf_p1 == 1 && obj.ekf_p1_done ==0)
+                [obj.eita,obj.P]=dif_ekf_p1(obj.x,obj.P,obj.hl,obj.Rl,obj.yl);
+                obj.P_i_i= obj.P;
+                obj.ekf_p1_done=1;
+                obj.measUpdateFlag=1;
+            end
+        end
+        
+        function checkekf_p2(obj,fstate,Q,diffEnable)
+            if(obj.ready_to_ekf_p2 == 1 )
+                obj.efk_part2(diffEnable);
+                obj.diffUpdateFlag = 1;
+                obj.reseteital();
+                %obj.ekf_p2_done =1;
+                            obj.readyTochangeCovFlag =1;
+            obj.x_i_i = obj.x;
+            obj.P_i_i = obj.P;
+            [obj.P,obj.x]=dif_ekf_p3(fstate ,obj.P,Q,obj.G,obj.x);
+            obj.state_ready =1;
+             
+             obj.x_zonotope = zonotope([obj.x,diag([3*sqrt(obj.P(1,1)),3*sqrt(obj.P(2,2))])]);
+            obj.algdone=1;
+            obj.readytotakeDis=1;
+            obj.zonoforDisSave=obj.x_zonotope;
+            end
+            %time update step
+
+        end
+      function efk_part2(obj,diffEnable)
+            
+            if(diffEnable)
+                obj.x=0;
+                %   obj.P=0;
+                for i =1:length(obj.c)
+                    obj.x = obj.x+ obj.eital{i}*obj.c(i) ;
+                    %      obj.P = obj.P+ obj.Pl{i}*obj.c(i) ;
+                end
+            else
+                %rm diff
+                obj.x= obj.eita;
+                
+            end
+            
+      end
+        
+       function seteital(obj,index,eita,P_neig)
+          if (~any(obj.nodeIndex == index))
+            obj.nodeIndex(obj.eita_index)=index;
+            obj.eital{obj.eita_index}= eita;
+            obj.Pl{obj.eita_index}= P_neig;
+
+            obj.eita_index = obj.eita_index +1;
+          end
+          if obj.eita_index > length(obj.myneigh)
+              obj.ready_to_ekf_p2 =1;
+              %efk_part2(obj,Q,fstate)
+          end
+        end
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function reseteital(obj)
             obj.eital={};  
+            obj.Pl={};
+            obj.yl={};
+            obj.Rl={};
             obj.zonol={};
             obj.eita_red=[];
             obj.yl={};
@@ -596,7 +667,7 @@ classdef Node_R < handle
 
         
      
-        function ekf_part3(obj,Q,fstate)
+        function timeUpdate(obj,Q,fstate)
             obj.timeUpdateFlag = 1;
             obj.readyTochangeCovFlag =1;
             obj.x_i_i = obj.x;

@@ -4,7 +4,7 @@ close all; clear all;
 addpath('classes');
 addpath('utilities');
 % should i plot the results
-plotting = 1;
+plotting = 0;
 %% Load saved data
 %load('cache/tempRelated')
 %load('cache/kalmanIns/newDis/Re_2neigh')
@@ -14,8 +14,8 @@ plotting = 1;
 %load('cache/paper/4neigh/berg-frobenius.mat')
 %load('cache/newDis/nodiff/4neigh/set-frobenius.mat')
 
-load('cache/temp');
-
+%load('cache/temp');
+load('cache/DKF/DKF_6neigh')
 
 %load('cache/negone');
 node_ids = nm.getNodeIds();
